@@ -1,0 +1,32 @@
+
+
+services:
+  backend:
+    build: ./Backend
+    container_name: legal-doc-analyzer-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend/pdfs:/app/pdfs
+      - ./Backend/vectorstore:/app/vectorstore
+      - ./Backend/reports:/app/reports
+    environment:
+      - ALLOWED_ORIGINS=http://localhost:3000
+    networks:
+      - app-network
+
+  frontend:
+    build: ./Frontend
+    container_name: legal-doc-analyzer-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
